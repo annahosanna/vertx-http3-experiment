@@ -1,0 +1,36 @@
+apply plugin: 'java'
+
+repositories {
+
+	mavenCentral()
+
+}
+
+sourceSets {
+	main
+}
+
+dependencies {
+	compile( "log4j:log4j:1.2.17")
+}
+
+configurations {
+	compile
+}
+
+compileJava.doFirst {
+	sourceSets.main.java.srcDirs = [ 'src/main/java' ]
+}
+
+jar {
+    manifest {
+        // 'Implementation-Version': version,
+        attributes (
+          'Main-Class' : 'examples.Main'
+        )
+    }
+    archiveName = "sendslack.jar"
+    from {
+      configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

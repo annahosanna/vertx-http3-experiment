@@ -1,0 +1,91 @@
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpServerRequest as NettyRequest;
+import io.vertx.core.http.HttpServerRequest as VertxRequest;
+import io.vertx.core.http.impl.HttpServerRequestImpl;
+import io.vertx.core.net.impl.ConnectionBase;
+
+public class Http3Server {
+
+    private final EventLoopGroup group;
+    private final Channel server;
+
+    public Http3Server() {
+        group = new NioEventLoopGroup();
+
+        QuicSslContext context = QuicSslContextBuilder.forServer(...)
+            .applicationProtocols("h3")
+            .build();
+
+        server = QuicServerBuilder.create(group)
+            .sslContext(context)
+            .handler(new ChannelInitializer<Channel>() {
+                @Override
+                protected void initChannel(Channel ch) {
+                    ch.pipeline()
+                        .addLast(new Http3ServerConnectionHandler())
+                        .addLast(new Http3RequestHandler());
+                }
+            })
+            .bind(8443)
+            .sync()
+            .channel();
+    }
+
+    private class Http3RequestHandler extends ChannelInboundHandlerAdapter {
+
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            if (msg instanceof NettyRequest) {
+                NettyRequest nettyReq = (NettyRequest) msg;
+
+                // Convert Netty request to Vert.x request
+                VertxRequest vertxReq = convertRequest(nettyReq, ctx);
+
+                // Handle the Vert.x request
+                handleVertxRequest(vertxReq);
+            }
+        }
+
+        private VertxRequest convertRequest(NettyRequest nettyReq, ChannelHandlerContext ctx) {
+            ConnectionBase conn = new ConnectionBase(
+                ctx.channel(), 
+                true, // server-side
+                null, // SSL context not needed for demo
+                null  // options not needed for demo
+            );
+
+            HttpServerRequestImpl vertxReq = new HttpServerRequestImpl(
+                conn,
+                nettyReq.method().name(),
+                nettyReq.uri(),
+                nettyReq.protocolVersion().text(),
+                nettyReq.headers(),
+                null // serverOrigin not needed for demo
+            );
+
+            return vertxReq;
+        }
+
+        private void handleVertxRequest(VertxRequest req) {
+            // Handle the converted Vert.x request here
+            System.out.println("Received Vert.x request: " + req.uri());
+
+            // Example response
+            req.response()
+               .setStatusCode(200)
+               .putHeader("content-type", "text/plain")
+               .end("Hello from HTTP/3 server!");
+        }
+    }
+
+    public void shutdown() {
+        server.close();
+        group.shutdownGracefully();
+    }
+
+    public static void main(String[] args) {
+        Http3Server server = new Http3Server();
+        // Keep server running
+        server.server.closeFuture().syncUninterruptibly();
+    }
+}

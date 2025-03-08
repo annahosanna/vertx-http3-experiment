@@ -1,7 +1,8 @@
 package example;
 
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http3.Http3ServerCodec;
+import io.netty.incubator.codec.http3.Http3;
+// import io.netty.handler.codec.http3.Http3ServerCodec;
 // Attempt 17. Might actually work
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -25,10 +26,10 @@ public class Http3ServerTest01 extends AbstractVerticle {
 
     // Add HTTP/3 codec to pipeline
     // No such method as nettyHttpServer
-    server
-      .nettyHttpServer()
-      .pipeline()
-      .addLast("http3codec", new Http3ServerCodec());
+//    server
+//      .nettyHttpServer()
+//      .pipeline()
+//      .addLast("http3codec", new Http3ServerCodec());
 
     // Configure routes
     router
@@ -43,15 +44,18 @@ public class Http3ServerTest01 extends AbstractVerticle {
     // Start server
     server
       .requestHandler(router)
-      .listen(res -> {
-        if (res.succeeded()) {
-          System.out.println(
-            "Server started on port " + res.result().actualPort()
-          );
-        } else {
-          System.out.println("Failed to start server: " + res.cause());
-        }
-      });
+      .listen(8443);
+      
+// listen() returns a future
+//      .listen(res -> {
+//        if (res.succeeded()) {
+//          System.out.println(
+//            "Server started on port " + res.result().actualPort()
+//          );
+//        } else {
+//          System.out.println("Failed to start server: " + res.cause());
+//        }
+//      });
   }
 
   public static void main(String[] args) {

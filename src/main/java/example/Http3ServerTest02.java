@@ -1,7 +1,7 @@
 package example;
 
 import io.netty.incubator.codec.http3.Http3;
-import io.netty.incubator.codec.http3.Http3ServerCodec;
+// import io.netty.incubator.codec.http3.Http3ServerCodec;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;

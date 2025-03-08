@@ -1,3 +1,5 @@
+package example;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -9,54 +11,66 @@ import io.vertx.ext.web.Router;
 
 public class Http3Server {
 
-    public static void main(String[] args) throws Exception {
-        // Initialize Vert.x and create router
-        Vertx vertx = Vertx.vertx();
-        Router router = Router.router(vertx);
+  public static void main(String[] args) throws Exception {
+    // Initialize Vert.x and create router
+    Vertx vertx = Vertx.vertx();
+    Router router = Router.router(vertx);
 
-        // Add route handler for /fortunes endpoint
-        router.get("/fortunes").handler(ctx -> {
-            ctx.response()
-               .putHeader("content-type", "application/json")
-               .end("{\"fortune\": \"Today is your lucky day!\"}");
-        });
+    // Add route handler for /fortunes endpoint
+    router
+      .get("/fortunes")
+      .handler(ctx -> {
+        ctx
+          .response()
+          .putHeader("content-type", "application/json")
+          .end("{\"fortune\": \"Today is your lucky day!\"}");
+      });
 
-        // Configure HTTP/3 server
-        NioEventLoopGroup group = new NioEventLoopGroup(1);
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group)
-                    .channel(Http3.getServerChannel())
-                    .handler(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel ch) {
-                            ch.pipeline().addLast(
-                                Http3ServerCodecBuilder.forServer()
-                                    .build(),
-                                new Http3ServerHandler(router)  // Custom handler that uses Vert.x router
-                            );
-                        }
-                    });
+    // Configure HTTP/3 server
+    NioEventLoopGroup group = new NioEventLoopGroup(1);
+    try {
+      Bootstrap bootstrap = new Bootstrap();
+      bootstrap
+        .group(group)
+        .channel(Http3.getServerChannel())
+        .handler(
+          new ChannelInitializer<Channel>() {
+            @Override
+            protected void initChannel(Channel ch) {
+              ch
+                .pipeline()
+                .addLast(
+                  Http3ServerCodecBuilder.forServer().build(),
+                  new Http3ServerHandler(router) // Custom handler that uses Vert.x router
+                );
+            }
+          }
+        );
 
-            Channel channel = bootstrap.bind(8443).sync().channel();
-            channel.closeFuture().sync();
-        } finally {
-            group.shutdownGracefully();
-        }
+      Channel channel = bootstrap.bind(8443).sync().channel();
+      channel.closeFuture().sync();
+    } finally {
+      group.shutdownGracefully();
     }
+  }
 }
 
-class Http3ServerHandler extends SimpleChannelInboundHandler<Http3HeadersFrame> {
-    private final Router router;
+class Http3ServerHandler
+  extends SimpleChannelInboundHandler<Http3HeadersFrame> {
 
-    public Http3ServerHandler(Router router) {
-        this.router = router;
-    }
+  private final Router router;
 
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Http3HeadersFrame frame) {
-        // Convert Netty request to Vert.x request and use router
-        HttpServerRequest request = new VertxHttpServerRequest(frame);
-        router.handle(request);
-    }
+  public Http3ServerHandler(Router router) {
+    this.router = router;
+  }
+
+  @Override
+  protected void channelRead0(
+    ChannelHandlerContext ctx,
+    Http3HeadersFrame frame
+  ) {
+    // Convert Netty request to Vert.x request and use router
+    HttpServerRequest request = new VertxHttpServerRequest(frame);
+    router.handle(request);
+  }
 }

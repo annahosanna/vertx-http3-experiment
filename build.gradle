@@ -11,7 +11,10 @@ sourceSets {
 }
 
 dependencies {
-	compile( "log4j:log4j:1.2.17")
+	compile( "io.vertx:vertx-core:5.0.0.CR5")
+	compile( "io.vertx:vertx-web:5.0.0.CR5")
+	compile( "io.netty.incubator:netty-incubator-codec-quic:0.0.20.Final")
+	compile( "io.netty.incubator:netty-incubator-codec-http3:0.0.28.Final")
 }
 
 configurations {
@@ -26,10 +29,10 @@ jar {
     manifest {
         // 'Implementation-Version': version,
         attributes (
-          'Main-Class' : 'examples.Main'
+          'Main-Class' : 'examples.Http3ServerVerticle'
         )
     }
-    archiveName = "sendslack.jar"
+    archiveName = "http3-test.jar"
     from {
       configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }

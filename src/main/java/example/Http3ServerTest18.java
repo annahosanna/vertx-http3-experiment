@@ -1,3 +1,5 @@
+package example;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpServerRequest as NettyRequest;
 import io.vertx.core.http.HttpServerRequest as VertxRequest;
@@ -48,7 +50,7 @@ public class Http3Server {
 
         private VertxRequest convertRequest(NettyRequest nettyReq, ChannelHandlerContext ctx) {
             ConnectionBase conn = new ConnectionBase(
-                ctx.channel(), 
+                ctx.channel(),
                 true, // server-side
                 null, // SSL context not needed for demo
                 null  // options not needed for demo

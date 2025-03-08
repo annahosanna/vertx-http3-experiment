@@ -1,3 +1,5 @@
+package example;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -41,7 +43,7 @@ public class Http3Server {
                 protected Http3ServerStreamFrameListener newStreamFrameListener() {
                     return new Http3ServerStreamFrameListener() {
                         @Override
-                        public void onHeadersRead(ChannelHandlerContext ctx, long streamId, 
+                        public void onHeadersRead(ChannelHandlerContext ctx, long streamId,
                             Http3Headers headers, boolean endStream) {
 
                             // Convert Netty request to Vert.x request

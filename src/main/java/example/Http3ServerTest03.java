@@ -9,7 +9,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 
 // Might work but does not use a vertx router
-public class Http3QuicServer extends AbstractVerticle {
+public class Http3ServerTest03 extends AbstractVerticle {
 
   private HttpServer server;
 
@@ -69,6 +69,6 @@ public class Http3QuicServer extends AbstractVerticle {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
-    vertx.deployVerticle(new Http3QuicServer());
+    vertx.deployVerticle(new Http3ServerTest03());
   }
 }

@@ -12,12 +12,12 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Router;
 
-public class Http3Server {
+public class Http3ServerTest20 {
 
   private final Vertx vertx;
   private final Router router;
 
-  public Http3Server() {
+  public Http3ServerTest20() {
     this.vertx = Vertx.vertx();
     this.router = Router.router(vertx);
 
@@ -82,7 +82,7 @@ public class Http3Server {
   }
 
   public static void main(String[] args) {
-    new Http3Server().start();
+    new Http3ServerTest20().start();
   }
 }
 

@@ -9,12 +9,12 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
-public class Http3FortuneServer {
+public class Http3ServerTest16 {
 
   private final Vertx vertx;
   private final Router router;
 
-  public Http3FortuneServer() {
+  public Http3ServerTest16() {
     this.vertx = Vertx.vertx();
     this.router = Router.router(vertx);
 
@@ -74,6 +74,6 @@ public class Http3FortuneServer {
   }
 
   public static void main(String[] args) throws Exception {
-    new Http3FortuneServer().start();
+    new Http3ServerTest16().start();
   }
 }

@@ -9,7 +9,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 
-public class Http3FortuneServer {
+public class Http3ServerTest21 {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();

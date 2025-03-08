@@ -9,10 +9,10 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
-public class Http3FortuneServer extends AbstractVerticle {
+public class Http3ServerTest04 extends AbstractVerticle {
 
   public static void main(String[] args) {
-    Vertx.vertx().deployVerticle(new Http3FortuneServer());
+    Vertx.vertx().deployVerticle(new Http3ServerTest04());
   }
 
   @Override

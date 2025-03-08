@@ -9,7 +9,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
 
-public class Http3ServerVerticle extends AbstractVerticle {
+public class Http3ServerTest01 extends AbstractVerticle {
 
   @Override
   public void start() {
@@ -56,6 +56,6 @@ public class Http3ServerVerticle extends AbstractVerticle {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
-    vertx.deployVerticle(new Http3ServerVerticle());
+    vertx.deployVerticle(new Http3ServerTest01());
   }
 }

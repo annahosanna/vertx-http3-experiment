@@ -6,15 +6,18 @@ import io.vertx.core.http.HttpServerRequest as VertxRequest;
 import io.vertx.core.http.impl.HttpServerRequestImpl;
 import io.vertx.core.net.impl.ConnectionBase;
 
-public class Http3Server {
+public class Http3ServerTest18 {
 
     private final EventLoopGroup group;
     private final Channel server;
 
-    public Http3Server() {
+    public Http3ServerTest18() {
         group = new NioEventLoopGroup();
 
-        QuicSslContext context = QuicSslContextBuilder.forServer(...)
+        // QuicSslContext context = QuicSslContextBuilder.forServer(...)
+        //     .applicationProtocols("h3")
+        //     .build();
+        QuicSslContext context = QuicSslContextBuilder
             .applicationProtocols("h3")
             .build();
 
@@ -86,7 +89,7 @@ public class Http3Server {
     }
 
     public static void main(String[] args) {
-        Http3Server server = new Http3Server();
+        Http3ServerTest18 server = new Http3ServerTest18();
         // Keep server running
         server.server.closeFuture().syncUninterruptibly();
     }

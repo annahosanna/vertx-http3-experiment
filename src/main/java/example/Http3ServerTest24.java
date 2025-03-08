@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Http3FortuneServer {
+public class Http3ServerTest24 {
 
   private static final int PORT = 443;
   private static final String ALT_SVC = "h3=\":443\"; ma=2592000";

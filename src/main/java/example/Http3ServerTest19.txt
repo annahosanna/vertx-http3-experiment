@@ -11,13 +11,13 @@ import io.vertx.core.http.impl.HttpServerRequestImpl;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
-public class Http3Server {
+public class Http3ServerTest19 {
 
     private static final int PORT = 8443;
     private final Vertx vertx;
     private final Router router;
 
-    public Http3Server() {
+    public Http3ServerTest19() {
         this.vertx = Vertx.vertx();
         this.router = Router.router(vertx);
         setupRoutes();
@@ -84,6 +84,6 @@ public class Http3Server {
     }
 
     public static void main(String[] args) throws Exception {
-        new Http3Server().start();
+        new Http3ServerTest19().start();
     }
 }

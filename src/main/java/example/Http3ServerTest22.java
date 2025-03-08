@@ -10,12 +10,12 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
-public class Http3Server {
+public class Http3ServerTest22 {
 
   private final Vertx vertx;
   private final Router router;
 
-  public Http3Server() {
+  public Http3ServerTest22() {
     this.vertx = Vertx.vertx();
     this.router = Router.router(vertx);
 
@@ -32,7 +32,7 @@ public class Http3Server {
 
   public void start() throws Exception {
     // Configure HTTP/3 server
-    Http3Server server = Http3Server.builder()
+    Http3ServerTest22 server = Http3ServerTest22.builder()
       .certificateChain("cert.pem")
       .privateKey("key.pem")
       .childHandler(
@@ -78,7 +78,7 @@ public class Http3Server {
   }
 
   public static void main(String[] args) throws Exception {
-    new Http3Server().start();
+    new Http3ServerTest22().start();
   }
 }
 

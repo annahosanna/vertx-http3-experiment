@@ -8,7 +8,7 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 
-public class Http3Server {
+public class Http3ServerTest23 {
 
   public static void main(String[] args) throws Exception {
     Vertx vertx = Vertx.vertx();

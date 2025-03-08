@@ -12,7 +12,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 
-public class Http3Server {
+public class Http3ServerTest15 {
 
   public static void main(String[] args) throws Exception {
     // Initialize Vert.x

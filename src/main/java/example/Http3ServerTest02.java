@@ -9,7 +9,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.JksOptions;
 
 // Attempt 12. Might work
-public class Http3VertxServer extends AbstractVerticle {
+public class Http3ServerTest02 extends AbstractVerticle {
 
   @Override
   public void start() throws Exception {
@@ -54,6 +54,6 @@ public class Http3VertxServer extends AbstractVerticle {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
-    vertx.deployVerticle(new Http3VertxServer());
+    vertx.deployVerticle(new Http3ServerTest02());
   }
 }

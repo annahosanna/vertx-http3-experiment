@@ -17,9 +17,10 @@ public class Http3ServerTest02 extends AbstractVerticle {
     HttpServerOptions options = new HttpServerOptions()
       .setUseAlpn(true)
       .setSsl(true)
-      .setSslEngineOptions(
-        new JksOptions().setPath("server-keystore.jks").setPassword("password")
-      )
+      .setSslEngineOptions(null)
+//      .setSslEngineOptions(
+//        new JksOptions().setPath("server-keystore.jks").setPassword("password")
+//      )
       .setPort(443);
 
     // Create and configure Vertx HTTP server
@@ -28,9 +29,9 @@ public class Http3ServerTest02 extends AbstractVerticle {
     // Add HTTP/3 codec
     // connectionHandler method exists and returns a HttpConnection
     // But there is no such thing as a connectionHandler
-    server.connectionHandler(conn -> {
-      conn.channelHandlerContext().pipeline().addLast(new Http3ServerCodec());
-    });
+//    server.connectionHandler(conn -> {
+//      conn.channelHandlerContext().pipeline().addLast(new Http3ServerCodec());
+//    });
 
     // Handle requests
     server.requestHandler(req -> {
@@ -41,15 +42,17 @@ public class Http3ServerTest02 extends AbstractVerticle {
     });
 
     // Start the server
-    server.listen(ar -> {
-      if (ar.succeeded()) {
-        System.out.println(
-          "HTTP/3 server started on port " + ar.result().actualPort()
-        );
-      } else {
-        System.out.println("Failed to start server: " + ar.cause());
-      }
-    });
+    server.listen(8443);
+    		
+//    ar -> {
+//      if (ar.succeeded()) {
+//        System.out.println(
+//          "HTTP/3 server started on port " + ar.result().actualPort()
+//        );
+//      } else {
+//        System.out.println("Failed to start server: " + ar.cause());
+//      }
+//    });
   }
 
   public static void main(String[] args) {

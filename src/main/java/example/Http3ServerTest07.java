@@ -32,8 +32,9 @@ public class Http3ServerTest07 {
       });
 
     // Configure Netty
-    EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-    EventLoopGroup workerGroup = new NioEventLoopGroup();
+    // Somehow create an EventLoopGroup
+    EventLoopGroup bossGroup;
+    EventLoopGroup workerGroup;
 
     try {
       ServerBootstrap b = new ServerBootstrap();
@@ -44,6 +45,7 @@ public class Http3ServerTest07 {
           new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) {
+            	// Fix this
               ch.pipeline().addLast(new HttpServerHandler(router));
             }
           }

@@ -1,5 +1,6 @@
 package example;
 
+import io.netty.incubator.codec.http3.Http3RequestStreamInboundHandler;
 import io.netty.incubator.codec.http3.Http3ServerCodec;
 import io.netty.incubator.codec.quic.QuicChannel;
 import io.netty.incubator.codec.quic.QuicServerCodecBuilder;
@@ -30,19 +31,23 @@ public class Http3ServerTest03 extends AbstractVerticle {
 
     server = vertx
       .createHttpServer(options)
-      .connectionHandler(conn -> {
-        QuicChannel quicChannel = conn
-          .nettyChannel()
-          .pipeline()
-          .get(QuicChannel.class);
+      
+      // created external class to do this
+      
+//      .connectionHandler(conn -> {
+//        QuicChannel quicChannel = conn.
+//          .nettyChannel()
+//          .pipeline()
+//          .get(QuicChannel.class);
 
-        if (quicChannel != null) {
-          quicChannel
-            .pipeline()
-            .addLast(new Http3ServerCodec())
-            .addLast(new Http3RequestHandler());
-        }
-      })
+//        if (quicChannel != null) {
+        	//fix this
+//          quicChannel
+//            .pipeline()
+//            .addLast(new Http3ServerHandler())
+//            .addLast(new Http3RequestStreamInboundHandler());
+//        }
+//      })
       .requestHandler(req -> {
         req
           .response()

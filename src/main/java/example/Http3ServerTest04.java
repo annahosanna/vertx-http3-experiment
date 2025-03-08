@@ -37,6 +37,7 @@ public class Http3ServerTest04 extends AbstractVerticle {
       );
   }
 
+  // This needs to be a seperate class
   private class FortuneHandler extends ChannelInboundHandlerAdapter {
 
     @Override
@@ -46,6 +47,7 @@ public class Http3ServerTest04 extends AbstractVerticle {
 
         // Check for HTTP/2 upgrade
         if (
+        		// Not exactly sure what H2C header is
           request
             .headers()
             .contains(HttpHeaderNames.UPGRADE, HttpHeaderValues.H2C, true)

@@ -1,10 +1,12 @@
 package example;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.incubator.codec.http3.DefaultHttp3DataFrame;
 import io.netty.incubator.codec.http3.Http3DataFrame;
 import io.netty.incubator.codec.http3.Http3HeadersFrame;
 import io.netty.incubator.codec.http3.Http3RequestStreamInboundHandler;
-import io.netty.incubator.codec.http3.Http3ServerBuilder;
+// import io.netty.incubator.codec.http3.Http3ServerBuilder;
+import example.Http3ServerBuilder;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -34,16 +36,20 @@ public class Http3ServerTest16 {
       .host("localhost")
       .port(443)
       .handler(
+    		  // This does not implement everything it needs to
+    		  // need to implement a class for ChannelHandlerContext
         new Http3RequestStreamInboundHandler() {
           @Override
           protected void channelRead(
             ChannelHandlerContext ctx,
             Http3HeadersFrame frame
           ) {
+        	  // need to convert netty Http3HeadersFrame.headers to vertx HttpHeaders 
             String path = frame.headers().path().toString();
 
             if (path.equals("/fortunes")) {
               // Create vertx request context
+            	// This allows methods to be set but not headers how to do that?
               RoutingContext routingContext = router.createContext(
                 new VertxHttpServerRequest(frame)
               );
@@ -52,8 +58,7 @@ public class Http3ServerTest16 {
               router.handle(routingContext);
 
               // Send response back through http3
-              Http3HeadersFrame responseHeaders =
-                new DefaultHttp3HeadersFrame();
+              Http3HeadersFrame responseHeaders;
               responseHeaders
                 .headers()
                 .status("200")

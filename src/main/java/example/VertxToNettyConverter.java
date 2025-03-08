@@ -1,4 +1,5 @@
 package example;
+
 // Add these dependencies to your pom.xml:
 /*
 <dependency>
@@ -24,55 +25,63 @@ import io.vertx.ext.web.RoutingContext;
 
 public class VertxToNettyConverter {
 
-    public static Http2ConnectionHandler convertRouterToHttp2Handler(Router router) {
-        // Create the HTTP/2 connection handler
-        Http2ConnectionHandler http2Handler = new Http2ConnectionHandlerBuilder()
-            .frameListener(new Http2FrameListener() {
-                @Override
-                public void onHeadersRead(ChannelHandlerContext ctx, 
-                    int streamId, 
-                    io.netty.handler.codec.http2.Http2Headers headers, 
-                    int padding, 
-                    boolean endStream) {
+  public static Http2ConnectionHandler convertRouterToHttp2Handler(
+    Router router
+  ) {
+    // Create the HTTP/2 connection handler
+    Http2ConnectionHandler http2Handler = new Http2ConnectionHandlerBuilder()
+      .frameListener(
+        new Http2FrameListener() {
+          @Override
+          public void onHeadersRead(
+            ChannelHandlerContext ctx,
+            int streamId,
+            io.netty.handler.codec.http2.Http2Headers headers,
+            int padding,
+            boolean endStream
+          ) {
+            // Convert Netty headers to Vertx request
+            io.vertx.core.http.HttpServerRequest vertxRequest =
+              convertNettyHeadersToVertxRequest(headers);
 
-                    // Convert Netty headers to Vertx request
-                    io.vertx.core.http.HttpServerRequest vertxRequest = 
-                        convertNettyHeadersToVertxRequest(headers);
+            // Create routing context and handle the request
+            RoutingContext routingContext = createRoutingContext(vertxRequest);
+            router.handle(routingContext);
+          }
+          // Implement other Http2FrameListener methods...
+        }
+      )
+      .build();
 
-                    // Create routing context and handle the request
-                    RoutingContext routingContext = createRoutingContext(vertxRequest);
-                    router.handle(routingContext);
-                }
+    return http2Handler;
+  }
 
-                // Implement other Http2FrameListener methods...
-            })
-            .build();
+  private static io.vertx.core.http.HttpServerRequest convertNettyHeadersToVertxRequest(
+    io.netty.handler.codec.http2.Http2Headers headers
+  ) {
+    // Implement conversion logic
+    return null; // Placeholder
+  }
 
-        return http2Handler;
-    }
+  private static RoutingContext createRoutingContext(
+    io.vertx.core.http.HttpServerRequest request
+  ) {
+    // Implement routing context creation
+    return null; // Placeholder
+  }
 
-    private static io.vertx.core.http.HttpServerRequest convertNettyHeadersToVertxRequest(
-        io.netty.handler.codec.http2.Http2Headers headers) {
-        // Implement conversion logic
-        return null; // Placeholder
-    }
+  public static void main(String[] args) {
+    Vertx vertx = Vertx.vertx();
+    Router router = Router.router(vertx);
 
-    private static RoutingContext createRoutingContext(
-        io.vertx.core.http.HttpServerRequest request) {
-        // Implement routing context creation
-        return null; // Placeholder
-    }
+    // Add some routes
+    router
+      .get("/example")
+      .handler(rc -> {
+        rc.response().end("Hello from converted handler!");
+      });
 
-    public static void main(String[] args) {
-        Vertx vertx = Vertx.vertx();
-        Router router = Router.router(vertx);
-
-        // Add some routes
-        router.get("/example").handler(rc -> {
-            rc.response().end("Hello from converted handler!");
-        });
-
-        // Convert to Netty handler
-        Http2ConnectionHandler nettyHandler = convertRouterToHttp2Handler(router);
-    }
+    // Convert to Netty handler
+    Http2ConnectionHandler nettyHandler = convertRouterToHttp2Handler(router);
+  }
 }

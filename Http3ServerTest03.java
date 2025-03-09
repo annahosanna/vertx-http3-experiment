@@ -22,7 +22,8 @@ public class Http3ServerTest03 extends AbstractVerticle {
       .setUseAlpn(true)
       .setHost("localhost");
 
-    QuicServerCodecBuilder quicCodec = QuicServerCodecBuilder.create()
+    QuicServerCodecBuilder quicCodec = QuicServerCodecBuilder
+    .create()
       .sslContext(options.getSslOptions().getSslContext())
       .maxIdleTimeout(5000, TimeUnit.MILLISECONDS)
       .initialMaxData(10000000)

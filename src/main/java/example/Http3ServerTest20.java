@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
-import io.netty.incubator.codec.http3.Http3ServerHandler;
+// import io.netty.incubator.codec.http3.Http3ServerHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Router;
@@ -37,40 +37,8 @@ public class Http3ServerTest20 {
 	  // Http3ServerConnection handler is the wrong type
     Http3ServerConnectionHandler http3Handler =
       new Http3ServerConnectionHandler(
-        new Http3ServerHandler() {
-          @Override
-          protected void channelRead(
-            ChannelHandlerContext ctx,
-            HttpRequest request
-          ) {
-            // Convert Netty request to Vertx request
-            HttpServerRequest vertxRequest = new VertxHttpServerRequestAdapter(
-              request
-            );
-
-            // Handle request using Vertx router
-            router.handle(vertxRequest, response -> {
-              // Convert Vertx response back to Netty response
-              DefaultFullHttpResponse nettyResponse =
-                new DefaultFullHttpResponse(
-                  HttpVersion.HTTP_1_1,
-                  HttpResponseStatus.OK
-                );
-
-              // Copy response headers and content
-              response
-                .headers()
-                .forEach(header ->
-                  nettyResponse
-                    .headers()
-                    .set(header.getKey(), header.getValue())
-                );
-
-              nettyResponse.content().writeBytes(response.getBody().getBytes());
-
-              // Write response back through Netty channel
-              ctx.writeAndFlush(nettyResponse);
-            });
+        new ChannelHandler() {
+);
           }
         }
       );
@@ -87,29 +55,3 @@ public class Http3ServerTest20 {
   }
 }
 
-// Adapter class to convert Netty request to Vertx request
-class VertxHttpServerRequestAdapter implements HttpServerRequest {
-
-  private final HttpRequest nettyRequest;
-
-  public VertxHttpServerRequestAdapter(HttpRequest nettyRequest) {
-    this.nettyRequest = nettyRequest;
-  }
-
-  // Implement HttpServerRequest methods
-  @Override
-  public String uri() {
-    return nettyRequest.uri();
-  }
-
-  @Override
-  public String path() {
-    return nettyRequest.uri();
-  }
-
-  @Override
-  public String method() {
-    return nettyRequest.method().name();
-  }
-  // Implement other required methods...
-}

@@ -1,19 +1,20 @@
 # vertx-http3-experiment
 
-An attempt to create an http3 server with vertx. At first I thought I would need to use the netty http3 incubator; however, it turns out vertx already supports http3. This is just a rest endpoint which returns a fortune.
+## Goal
 
-## Goals
+1. An attempt to create an http3 server (returning fortunes) using vertx routes.
 
-- Beyond creating the server, the other goal was to use AI to generate the code. After 11 attempts or so I think I have something that should work (maybe a few tweaks here and there). The only item left to do is to use keytool to create a self signed certificate.
-- Since QUIC uses UDP another goal was to have an HTTP2 and HTTP3 server listening on the same port with different protocols(TCP/UDP), and sharing a Route and the HTTP2 server also returning the Alt-Svc header. If I want to get really ambitious I would detect if the protocol was HTTP1.1 and return a request to upgrade the connection to HTTP2
+- As best I can tell vertx does not yet support http3 (but I could be totally wrong).
+- Converting a Vertx Web RoutingContext to something for Netty will be interesting.
 
-## Full Stack
+2. To create the entire project with AI.
 
-- A single page web app to perform rendering for a query to the vertx server (more scalable than if vertx rendered the page)
-- A database connection which returns the fortunes to vertx (h2, or hsqldb come to mind)
-- An endpoint to add fortunes to the database would be handy too
-- And if you want to get really fancy you could put an ALB in front to handle OIDC authentication, and then process a JWT for authorization
+## Outcome
 
-## To Do
+- About 50 queries into this and I'm still not sure any of the AI generated code works:
 
-- Sort out what was returned. Some will not work and some will only work with modifications.
+1. Sometimes the code does not implement an Http3 server at all
+2. Often code that is generated, while it looks good, either it calls classes that do not exist, methods that do not exist or calls methods with the wrong arguments; however, the syntax of the program is correct.
+3. Seem to do a better job if the futures are in different classes or functions rather than inline
+4. Seems to do better when asked for small chunks rather than a whole solution
+5. Sometimes classes are used which an import does not exist for, or are dependant on an unknown library.

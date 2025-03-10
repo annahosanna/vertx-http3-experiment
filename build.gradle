@@ -10,13 +10,14 @@ sourceSets {
 }
 
 dependencies {
-  implementation "io.vertx:vertx-core:5.0.0.CR5"
-  implementation "io.vertx:vertx-web:5.0.0.CR5"
+// Bouncy castle in here
+implementation "io.vertx:vertx-core:5.0.0.CR5"
+// implementation "io.vertx:vertx-web:5.0.0.CR5"
   implementation "io.netty.incubator:netty-incubator-codec-quic:0.0.20.Final"
   implementation "io.netty.incubator:netty-incubator-codec-http3:0.0.28.Final"
-  implementation "io.vertx:vertx-web-common:5.0.0.CR5"
-  implementation "io.vertx:vertx-web-client:5.0.0.CR5"
-  implementation "io.vertx:vertx-web-api-service:5.0.0.CR5"
+//  implementation "io.vertx:vertx-web-common:5.0.0.CR5"
+//  implementation "io.vertx:vertx-web-client:5.0.0.CR5"
+//  implementation "io.vertx:vertx-web-api-service:5.0.0.CR5"
   implementation "io.netty:netty-common:4.1.118.Final"
   implementation "io.netty:netty-buffer:4.1.118.Final"
   implementation "io.netty:netty-codec:4.1.118.Final"
@@ -24,14 +25,14 @@ dependencies {
   implementation "io.netty:netty-transport:4.1.118.Final"
   implementation "io.netty.incubator:netty-incubator-codec-classes-quic:0.0.69.Final"
   // implementation "io.netty.incubator:netty-incubator-codec-native-quic:0.0.69.Final"
-  implementation "org.jetbrains:annotations:24.1.0"
+  // implementation "org.jetbrains:annotations:24.1.0"
   implementation "io.netty:netty-handler:4.1.118.Final"
   implementation "io.netty:netty-all:4.1.118.Final"
-  implementation "io.projectreactor:reactor-core:3.4.24"
-  implementation "io.reactivex.rxjava2:rxjava:2.2.21"
+  // implementation "io.projectreactor:reactor-core:3.4.24"
+  // implementation "io.reactivex.rxjava2:rxjava:2.2.21"
   implementation "com.h2database:h2:2.3.232"
-  implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
-  implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
+  // implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
+  // implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
 }
 
 configurations {
@@ -50,7 +51,7 @@ jar {
         )
     }
     archiveFileName = "http3-test.jar"
-    duplicatesStrategy "exclude"
+    duplicatesStrategy = "exclude"
     from {
       // configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
       configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

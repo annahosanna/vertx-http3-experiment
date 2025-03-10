@@ -3,11 +3,12 @@ package example;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.unix.ServerDomainSocketChannel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 // import io.netty.channel.SingleThreadEventLoop;
 import io.netty.channel.DefaultEventLoop;
-import io.netty.channel.socket.nio.NioDatagramChannel;
+// import io.netty.channel.socket.nio.NioDatagramChannel;
 // import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.ssl.util.
 SelfSignedCertificate;
@@ -46,11 +47,13 @@ public class FortuneServer {
       QuicServerCodecBuilder codecBuilder = new QuicServerCodecBuilder()
     		  .sslContext(sslContext)
     		  .handler(new FortuneServerInitializer());
-
+   
+// ServerChannel types: SctpServerChannel, ServerDomainSocketChannel, ServerSocketChannel, UdtServerChannel
+      // EpollServerDomainSocketChannel, KQueueServerDomainSocketChannel
       ServerBootstrap b = new ServerBootstrap();
       b
         .group(group)
-        .channel(ServerChannel.class)
+        .channel(ServerDomainSocketChannel.class)
         .childHandler(
           new ChannelInitializer<Channel>() {
             @Override

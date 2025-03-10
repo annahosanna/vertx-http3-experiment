@@ -19,7 +19,7 @@ dependencies {
   implementation "io.vertx:vertx-web-api-service:5.0.0.CR5"
   implementation "io.netty:netty-common:4.1.118.Final"
   implementation "io.netty:netty-buffer:4.1.118.Final"
-  implementation "io.netty:netty-codec:>4.1.118.Final"
+  implementation "io.netty:netty-codec:4.1.118.Final"
   implementation "io.netty:netty-codec-http:4.1.118.Final"
   implementation "io.netty:netty-transport:4.1.118.Final"
   implementation "io.netty.incubator:netty-incubator-codec-classes-quic:0.0.69.Final"
@@ -50,7 +50,9 @@ jar {
         )
     }
     archiveFileName = "http3-test.jar"
+    duplicatesStrategy "exclude"
     from {
-      configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+      // configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+      configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

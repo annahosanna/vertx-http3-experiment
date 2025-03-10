@@ -24,7 +24,7 @@
 - Example AI query
 
 ```
-create a java program using netty QuicServerCodecBuilder with an http3 channelhandler. Do not use Http3ServerCodecBuilder. Place handlers, and futures in seperate classes. Do not use vertx. Include the imports for each class. Write HEADER frames to h2 database.
+create a java program using netty QuicServerCodecBuilder with an io.netty.incubator.http3 channelhandler which returns fortunes stored in an h2 database. Do not use Http3ServerCodecBuilder. Place handlers, and futures in seperate classes. Do not use vertx. Include the imports for each class. Prepopulate the database.
 ```
 
 2. Notes about http3

@@ -31,6 +31,8 @@ dependencies {
   implementation "io.projectreactor:reactor-core:3.4.24"
   implementation "io.reactivex.rxjava2:rxjava:2.2.21"
   implementation "com.h2database:h2:2.3.232"
+  implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
+  implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
 }
 
 configurations {
@@ -45,7 +47,7 @@ jar {
     manifest {
         // 'Implementation-Version': version,
         attributes (
-          'Main-Class' : 'examples.Http3ServerTest01'
+          'Main-Class' : 'example.FortuneServer'
         )
     }
     archiveFileName = "http3-test.jar"

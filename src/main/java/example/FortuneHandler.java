@@ -26,6 +26,7 @@ public class FortuneHandler
     ByteBuf content = ctx.alloc().buffer();
     content.writeBytes(fortune.getBytes());
     ctx.writeAndFlush(new DefaultHttp3DataFrame(content));
+    content.release();
   }
 
   private String getRandomFortune() throws Exception {

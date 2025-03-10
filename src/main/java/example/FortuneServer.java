@@ -5,11 +5,22 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SingleThreadEventLoop;
+import io.netty.channel.DefaultEventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.handler.ssl.util.
+SelfSignedCertificate;
 import io.netty.incubator.codec.quic.QuicChannel;
 import io.netty.incubator.codec.quic.QuicServerCodecBuilder;
 import io.netty.incubator.codec.quic.QuicStreamChannel;
+import io.netty.channel.*;
+import io.netty.incubator.codec.quic.*;
+import io.netty.handler.ssl.*;
+import io.netty.incubator.codec.http3.*;
+import java.security.*;
+import java.sql.*;
+import java.util.concurrent.*;
+import javax.net.ssl.*;
 
 public class FortuneServer {
 
@@ -20,19 +31,24 @@ public class FortuneServer {
   }
 
   public void start() throws Exception {
-    SelfSignedCertificate cert = new SelfSignedCertificate();
-    EventLoopGroup group = new NioEventLoopGroup();
+    // SelfSignedCertificate cert = new SelfSignedCertificate();
+    // SingleThreadEventLoop group;
+    EventLoopGroup group = new DefaultEventLoop();
 
     try {
+        SelfSignedCertificate ssc = new SelfSignedCertificate();
+        QuicSslContext sslContext = QuicSslContextBuilder.forServer(ssc.privateKey(), null, ssc.certificate())
+            .applicationProtocols("h3")
+            .build();
+
       QuicServerCodecBuilder codecBuilder = new QuicServerCodecBuilder()
-        .certificate(cert.certificate())
-        .privateKey(cert.privateKey())
-        .handler(new FortuneServerInitializer());
+    		  .sslContext(sslContext)
+    		  .handler(new FortuneServerInitializer());
 
       ServerBootstrap b = new ServerBootstrap();
       b
         .group(group)
-        .channel(codecBuilder.buildChannel())
+//        .channel(codecBuilder.build())
         .childHandler(
           new ChannelInitializer<Channel>() {
             @Override

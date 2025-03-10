@@ -4,12 +4,16 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.incubator.codec.http3.*;
+import io.netty.incubator.codec.quic.*;
 
-public class Http3ServerExample {
+public class Http3ServerExample01 {
 
   public static void main(String[] args) throws Exception {
     // Configure the server
-    Http3ServerBuilder serverBuilder = Http3ServerBuilder.create()
+	  
+	  // Create a new ChannelHandler
+	  QuicServerCodecBuilder serverBuilder = Http3.newQuicServerCodecBuilder().
+	  // Http3ServerBuilder serverBuilder = Http3ServerBuilder.create()
       .host("localhost")
       .port(8443)
       .certificateChain("cert.pem")

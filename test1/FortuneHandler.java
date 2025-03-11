@@ -9,6 +9,7 @@ import io.netty.incubator.codec.http3.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import io.netty.util.ReferenceCountUtil;
 
 public class FortuneHandler
   extends SimpleChannelInboundHandler<Http3DataFrame> {
@@ -26,7 +27,8 @@ public class FortuneHandler
     ByteBuf content = ctx.alloc().buffer();
     content.writeBytes(fortune.getBytes());
     ctx.writeAndFlush(new DefaultHttp3DataFrame(content));
-    content.release();
+    // content.release();
+    ReferenceCountUtil.release(content);
   }
 
   private String getRandomFortune() throws Exception {

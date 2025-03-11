@@ -6,7 +6,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.incubator.codec.quic.QuicSslContext;
 import io.netty.incubator.codec.quic.QuicStreamType;
 import reactor.core.publisher.Mono;
-import reactor.netty.quic.QuicServer;
+import reactor.netty.incubator.quic.QuicServer;
 
 public class QuicServerExample {
 
@@ -31,9 +31,12 @@ public class QuicServerExample {
 
     final QuicSslContext finalSslContext = sslContext;
 
-    QuicServer.create()
+    // The only ssl attribute is sslEngine, not sslContext
+    // secure() takes a QuicChannel which extends a QuicSslEngine to obtain the sslEngine Provider
+    QuicServer quicServer = QuicServer.create().
       .port(8443)
-      .secure(spec -> spec.sslContext(finalSslContext))
+      .secure(spec -> spec.sslContext(finalSslContext));
+    quicServer.bind()
       .handle((in, out) -> {
         return out.sendString(Mono.just("Hello from QUIC server!")).then();
       })

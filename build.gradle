@@ -64,21 +64,12 @@ jar {
     }
     archiveFileName = "http3-test.jar"
     duplicatesStrategy = "exclude"
-//    exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
-    // exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-//    from {
-//      (configurations.runtime).collect {
-//        it.isDirectory() ? it : zipTree(it)
-//      }
-//    } {
-//      exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-//    }
+    exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
     from {
       // configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
       (configurations.runtimeClasspath).collect {
         it.isDirectory() ? it : zipTree(it)
       }
-      // { exclude = 'META-INF/*.RSA' }
 
     }
 }

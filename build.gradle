@@ -32,7 +32,7 @@ dependencies {
   // implementation "org.jetbrains:annotations:24.1.0"
   implementation "io.netty:netty-handler:4.1.118.Final"
   implementation "io.netty:netty-all:4.1.118.Final"
-  implementation "io.projectreactor:reactor-core:3.7.3"
+  implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.7.3'
   implementation group: 'io.projectreactor.netty.incubator', name: 'reactor-netty-incubator-quic', version: '0.2.3'
   implementation group: 'io.projectreactor.netty', name: 'reactor-netty-core', version: '1.2.3'
   implementation group: 'io.projectreactor.netty', name: 'reactor-netty', version: '1.2.3'
@@ -42,6 +42,9 @@ dependencies {
   implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
   implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
   implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.3"
+  // implementation group: 'io.projectreactor', name: 'reactor-bom', version: '2024.0.3'
+  implementation group: 'io.projectreactor.addons', name: 'reactor-pool', version: '1.1.2'
+  implementation group: 'io.projectreactor', name: 'reactor-tools', version: '3.7.3'
 }
 
 configurations {

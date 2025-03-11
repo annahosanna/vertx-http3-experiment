@@ -20,18 +20,23 @@ public class SelfSignedCertGenerator {
   private KeyPair keyPair;
   private X509Certificate certificate;
 
-  public SelfSignedCertGenerator() throws Exception {
+  public SelfSignedCertGenerator() {
     generateKeyPair();
     generateCertificate();
   }
 
-  private void generateKeyPair() throws NoSuchAlgorithmException {
+  private void generateKeyPair() {
+	  try {
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
     keyPairGenerator.initialize(2048);
     this.keyPair = keyPairGenerator.generateKeyPair();
+	  } catch (Exception e) {
+		  
+	  }
   }
 
-  private void generateCertificate() throws Exception {
+  private void generateCertificate() {
+	  try {
     X500Name issuerName = new X500Name("CN=localhost");
     X500Name subjectName = new X500Name("CN=localhost");
 
@@ -66,6 +71,9 @@ public class SelfSignedCertGenerator {
 
     this.certificate = new JcaX509CertificateConverter()
       .getCertificate(certHolder);
+	  } catch (Exception e) {
+		  
+	  }
   }
 
   public PrivateKey getPrivateKey() {

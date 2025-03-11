@@ -14,28 +14,35 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import java.security.cert.CertificateException;
+
 
 public class SelfSignedCertGenerator {
 
   private KeyPair keyPair;
   private X509Certificate certificate;
 
-  public SelfSignedCertGenerator() {
+  public SelfSignedCertGenerator() throws CertificateException {
+	  try {
     generateKeyPair();
     generateCertificate();
+	  } catch (Exception e) {
+		  throw new CertificateException(e);
+	  }
+	  
   }
 
-  private void generateKeyPair() {
-	  try {
+  private void generateKeyPair() throws CertificateException {
+	try {
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
     keyPairGenerator.initialize(2048);
     this.keyPair = keyPairGenerator.generateKeyPair();
-	  } catch (Exception e) {
-		  
-	  }
+	} catch (Exception e) {
+		throw new CertificateException(e);
+	}
   }
 
-  private void generateCertificate() {
+  private void generateCertificate() throws CertificateException {
 	  try {
     X500Name issuerName = new X500Name("CN=localhost");
     X500Name subjectName = new X500Name("CN=localhost");
@@ -72,7 +79,7 @@ public class SelfSignedCertGenerator {
     this.certificate = new JcaX509CertificateConverter()
       .getCertificate(certHolder);
 	  } catch (Exception e) {
-		  
+			throw new CertificateException(e);
 	  }
   }
 

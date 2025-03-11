@@ -1,36 +1,50 @@
 package example;
 
-import io.netty.handler.ssl.ApplicationProtocolConfig;
-import io.netty.handler.ssl.SslContextBuilder;
-// Required Imports
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.incubator.codec.http3.Http3DataFrame;
 import io.netty.incubator.codec.http3.Http3HeadersFrame;
-import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
-import reactor.core.publisher.Mono;
-import reactor.netty.quic.QuicServer;
+import io.netty.incubator.codec.http3.*;
+// import java.sql.Connection;
+// import java.sql.PreparedStatement;
+// import java.sql.ResultSet;
+import io.netty.util.ReferenceCountUtil;
 
-// Custom handler classes
-class FortuneHeaderFrameHandler extends Http3ServerConnectionHandler {
-
-  private static final String[] FORTUNES = {
-    "Today is your lucky day!",
-    "Good things come to those who wait",
-    "A pleasant surprise is coming your way",
-  };
+public class FortuneHeaderFrameHandler
+  extends SimpleChannelInboundHandler<Http3DataFrame> {
 
   @Override
-  protected void channelRead0(
-    ChannelHandlerContext ctx,
-    Http3HeadersFrame frame
-  ) {
-    String fortune = FORTUNES[new Random().nextInt(FORTUNES.length)];
-    Http3HeadersFrame response = new DefaultHttp3HeadersFrame()
-      .status(HttpResponseStatus.OK.codeAsText())
-      .add("content-type", "text/plain")
-      .add("content-length", fortune.length());
+  protected void channelRead0(ChannelHandlerContext ctx, Http3DataFrame frame)
+    throws Exception {
+    // String fortune = getRandomFortune();
+	  String fortune = "Yay it worked";
 
-    ctx.writeAndFlush(response);
-    ctx.writeAndFlush(
-      new DefaultHttp3DataFrame(Unpooled.wrappedBuffer(fortune.getBytes()))
-    );
+    Http3HeadersFrame headers = new DefaultHttp3HeadersFrame();
+    headers.headers().status("200").add("content-type", "text/plain");
+
+    ctx.write(headers);
+
+    ByteBuf content = ctx.alloc().buffer();
+    content.writeBytes(fortune.getBytes());
+    DefaultHttp3DataFrame df = new DefaultHttp3DataFrame(content);
+    ctx.writeAndFlush(df);
+    df.release();
+    // content.release();
+    ReferenceCountUtil.release(content);
   }
+
+//  private String getRandomFortune() throws Exception {
+//    String fortune = "";
+//    try (Connection conn = DatabaseConnection.getConnection()) {
+//      PreparedStatement stmt = conn.prepareStatement(
+//        "SELECT text FROM fortunes ORDER BY RANDOM() LIMIT 1"
+//      );
+//      ResultSet rs = stmt.executeQuery();
+//      if (rs.next()) {
+//        fortune = rs.getString("text");
+//      }
+//    }
+//    return fortune;
+//  }
 }

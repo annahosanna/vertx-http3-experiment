@@ -59,7 +59,7 @@ jar {
     manifest {
         // 'Implementation-Version': version,
         attributes (
-          'Main-Class' : 'example.FortuneServer'
+          'Main-Class' : 'example.MainServer'
         )
     }
     archiveFileName = "http3-test.jar"

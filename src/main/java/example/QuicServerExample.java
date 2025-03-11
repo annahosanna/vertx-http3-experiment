@@ -33,11 +33,11 @@ public class QuicServerExample {
 
     // The only ssl attribute is sslEngine, not sslContext
     // secure() takes a QuicChannel which extends a QuicSslEngine to obtain the sslEngine Provider
-    QuicServer quicServer = QuicServer.create().
+    QuicServer quicServer = QuicServer.create()
       .port(8443)
       .secure(spec -> spec.sslContext(finalSslContext));
     quicServer.bind()
-      .handle((in, out) -> {
+      .handle((in, out) -> { in.addHandlerFirst(null) out.currentContext().
         return out.sendString(Mono.just("Hello from QUIC server!")).then();
       })
       .bindNow()

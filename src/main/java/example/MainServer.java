@@ -20,7 +20,8 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 class MainServer {
 
-  public Mono<Void> start() {
+  // public Mono<Void> start() {
+	public static void main(String[] args) {
 	  SelfSignedCertificate ssc = null;
 	  try {
 		ssc = new SelfSignedCertificate();
@@ -55,12 +56,15 @@ class MainServer {
       .port(8443)
       .wiretap(true);
 
-    return quicServer
+    quicServer
       .bind()
       .handle((conn, prop) ->
         conn
           // .addHandlerLast("http3Handler", new Http3ServerConnectionHandler())
           .addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
-      );
+      ).block();
   }
+  
+  
+  
 }

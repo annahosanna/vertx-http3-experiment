@@ -66,9 +66,9 @@ class MainServer {
 		.tokenHandler(new QuicTokenEncryptionHandler())
 		.bindAddress(() -> new InetSocketAddress("localhost", 8443))
 		.bindNow()
-		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
-		.wait();
-	} catch (InterruptedException e) {
+		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler());
+	} catch (Exception e) {
+		// InterruptedException
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}

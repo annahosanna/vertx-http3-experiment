@@ -63,7 +63,7 @@ class MainServer {
     // complaining that bind and bindNow are null
     try {
 		quicServer
-		.tokenHandler(new TimestampTokenHandler())
+		.tokenHandler(new QuicTokenEncryptionHandler())
 		.bindAddress(() -> new InetSocketAddress("localhost", 8443))
 		.bindNow()
 		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())

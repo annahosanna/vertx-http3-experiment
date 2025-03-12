@@ -67,7 +67,7 @@ class MainServer {
 		.bindAddress(() -> new InetSocketAddress("localhost", 8443))
 		.bindNow()
 		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
-		.bind();
+		.bind().onDispose().block();
 	} catch (Exception e) {
 		// InterruptedException
 		// TODO Auto-generated catch block

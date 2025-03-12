@@ -12,11 +12,13 @@ import java.security.cert.CertificateException;
 // import io.netty.incubator.codec.http3.Http3HeadersFrame;
 import io.netty.incubator.codec.quic.QuicSslContext;
 import io.netty.incubator.codec.quic.QuicSslContextBuilder;
+import io.netty.incubator.codec.quic.QuicTokenHandler;
 // import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
 // import reactor.core.publisher.Mono;
 import reactor.netty.incubator.quic.QuicServer;
 // import io.netty.incubator.codec.quic.QuicServerCodecBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import java.net.InetSocketAddress;
 
 class MainServer {
 
@@ -56,13 +58,25 @@ class MainServer {
       .port(8443)
       .wiretap(true);
 
-    quicServer
-      .bind()
-      .handle((conn, prop) ->
-        conn
+      
+
+    // complaining that bind and bindNow are null
+    try {
+		quicServer
+		.tokenHandler(new TimestampTokenHandler())
+		.bindAddress(() -> new InetSocketAddress("localhost", 8443))
+		.bindNow()
+		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
+		.wait();
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+//      .handle((conn, prop) ->
+//        conn
           // .addHandlerLast("http3Handler", new Http3ServerConnectionHandler())
-          .addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
-      ).block();
+//          .addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
+//      ).block();
   }
   
   

@@ -3,8 +3,8 @@ package example;
 import io.netty.buffer.ByteBuf;
 // Import required crypto and netty classes
 import io.netty.incubator.codec.quic.QuicTokenHandler;
-
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -14,7 +14,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.ByteBuffer;
 
 // dcid is up to 20 bytes
 // token can be any length
@@ -42,6 +41,7 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
 
   private final SecretKeySpec aesKey;
   private final SecretKeySpec hmacKey;
+
   // not sure if a different instance of this class is called anytime a new token is needed
   // lets assume its one time only and so the dcid value can't be saved for validation
   // private final byte[] dcid;
@@ -61,7 +61,10 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       // AES doesn't care
       // String encodedKey = Base64.getEncoder()
       //  .encodeToString(secretKey.getEncoded());
-      return new SecretKeySpec(secretKey.getEncoded(),secretKey.getAlgorithm());
+      return new SecretKeySpec(
+        secretKey.getEncoded(),
+        secretKey.getAlgorithm()
+      );
     } catch (NoSuchAlgorithmException e) {
       // throw exception
     }
@@ -94,7 +97,7 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       byte[] byteDcid = dcid.array();
       long timestamp = System.currentTimeMillis();
       byte[] byteTimestamp = longToBytes(timestamp);
-      byte[] bytesConcatinated = concatinateBytes(byteDcid,byteTimestamp);
+      byte[] bytesConcatinated = concatinateBytes(byteDcid, byteTimestamp);
       byte[] paddedBytes = addPKCS7Padding(bytesConcatinated);
       byte[] encryptedDcid = cipher.doFinal(paddedBytes);
       // Append timestamp bytes(8) to dcid bytes(unknown length)
@@ -129,16 +132,15 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       );
 
       byte[] receivedAes = Arrays.copyOfRange(
-    	        token.array(),
-    	        0,
-    	        token.array().length - hmacLength
-    	      );
+        token.array(),
+        0,
+        token.array().length - hmacLength
+      );
 
       Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
       cipher.init(Cipher.DECRYPT_MODE, aesKey);
       byte[] decryptedAes = cipher.doFinal(receivedAes);
-      
-      
+
       // Validate HMAC
       Mac mac = Mac.getInstance(HMAC_ALGORITHM);
       mac.init(hmacKey);
@@ -191,27 +193,27 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
     int newLength = paddedData.length - paddingLength;
     return Arrays.copyOf(paddedData, newLength);
   }
+
   private static byte[] longToBytes(long x) {
-	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-	    buffer.putLong(x);
-	    return buffer.array();
-	}
+    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+    buffer.putLong(x);
+    return buffer.array();
+  }
 
-	private static long bytesToLong(byte[] bytes) {
-	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-	    buffer.put(bytes);
-	    buffer.flip();//need flip 
-	    return buffer.getLong();
+  private static long bytesToLong(byte[] bytes) {
+    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+    buffer.put(bytes);
+    buffer.flip(); //need flip
+    return buffer.getLong();
+  }
 
-	}    
-	 private byte[] concatinateBytes(byte[] array1, byte[] array2) {
-		 
-		 byte[] allByteArray = new byte[array1.length + array2.length];
+  private byte[] concatinateBytes(byte[] array1, byte[] array2) {
+    byte[] allByteArray = new byte[array1.length + array2.length];
 
-	    ByteBuffer buff = ByteBuffer.wrap(allByteArray);
-	    buff.put(array1);
-	    buff.put(array2);
+    ByteBuffer buff = ByteBuffer.wrap(allByteArray);
+    buff.put(array1);
+    buff.put(array2);
 
-	    return buff.array();
-	 }
+    return buff.array();
+  }
 }

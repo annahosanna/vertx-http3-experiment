@@ -12,10 +12,10 @@ import java.security.cert.CertificateException;
 // import io.netty.incubator.codec.http3.Http3HeadersFrame;
 import io.netty.incubator.codec.quic.QuicSslContext;
 import io.netty.incubator.codec.quic.QuicSslContextBuilder;
-import io.netty.incubator.codec.quic.QuicTokenHandler;
-import io.netty.incubator.codec.http3.*;
-import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
-import io.netty.incubator.codec.http3.Http3ConnectionHandler;
+// import io.netty.incubator.codec.quic.QuicTokenHandler;
+// import io.netty.incubator.codec.http3.*;
+// import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
+// import io.netty.incubator.codec.http3.Http3ConnectionHandler;
 // import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
 // import reactor.core.publisher.Mono;
 import reactor.netty.incubator.quic.QuicServer;
@@ -64,7 +64,7 @@ class MainServer {
       .secure(context)
       .handleStream((in, out) -> {
           in.withConnection(conn -> 
-              conn.addHandlerLast(new FortuneHeaderFrameHandler()));
+              conn.addHandlerLast(new Http3FortuneStreamHandler()));
           return out.sendString(Mono.empty());
       })
       .wiretap(true);
@@ -79,6 +79,7 @@ class MainServer {
     try {
 		quicServer
 		.bindNow()
+		// This handler doesn't seem like a stream handler
 		// .addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
 		.bind().onDispose().block();
 	} catch (Exception e) {

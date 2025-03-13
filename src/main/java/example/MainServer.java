@@ -13,12 +13,16 @@ import java.security.cert.CertificateException;
 import io.netty.incubator.codec.quic.QuicSslContext;
 import io.netty.incubator.codec.quic.QuicSslContextBuilder;
 import io.netty.incubator.codec.quic.QuicTokenHandler;
+import io.netty.incubator.codec.http3.*;
+import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
+import io.netty.incubator.codec.http3.Http3ConnectionHandler;
 // import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
 // import reactor.core.publisher.Mono;
 import reactor.netty.incubator.quic.QuicServer;
 // import io.netty.incubator.codec.quic.QuicServerCodecBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.InetSocketAddress;
+import reactor.core.publisher.Mono;
 
 class MainServer {
 
@@ -53,20 +57,29 @@ class MainServer {
 //      .build();
 
     
-    QuicServer quicServer = QuicServer.create()
+     QuicServer quicServer = 
+    		QuicServer.create()
+    	.tokenHandler(new QuicTokenEncryptionHandler())
+    	.bindAddress(() -> new InetSocketAddress("localhost", 8443))
       .secure(context)
-      .port(8443)
+      .handleStream((in, out) -> {
+          in.withConnection(conn -> 
+              conn.addHandlerLast(new FortuneHeaderFrameHandler()));
+          return out.sendString(Mono.empty());
+      })
       .wiretap(true);
+    
+      
 
+      // bind takes a bind(mono ->)
+      // bindNow() not
       
 
     // complaining that bind and bindNow are null
     try {
 		quicServer
-		.tokenHandler(new QuicTokenEncryptionHandler())
-		.bindAddress(() -> new InetSocketAddress("localhost", 8443))
 		.bindNow()
-		.addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
+		// .addHandlerLast("fortuneHandler", new FortuneHeaderFrameHandler())
 		.bind().onDispose().block();
 	} catch (Exception e) {
 		// InterruptedException

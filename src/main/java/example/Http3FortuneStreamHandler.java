@@ -31,7 +31,7 @@ public class Http3FortuneStreamHandler
 
     if ("/fortune".equals(path)) {
     	Random RANDOM = new Random();
-      String fortune = FORTUNES.get(RANDOM.nextInt(FORTUNES.size()));
+      String fortune = FORTUNES[RANDOM.nextInt(FORTUNES.length)];
       //String jsonResponse = MAPPER.writeValueAsString(
       String startOfString = new String("{fortune:\"");
       String endOfString = new String("\"}");

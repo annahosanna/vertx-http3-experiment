@@ -44,6 +44,7 @@ class MainServer {
     // Figure out how to use pem from files
     // QuicSslContextBuilder.forServer(java.security.PrivateKey key, java.lang.String keyPassword, java.security.cert.X509Certificate[] certChain);
     // or use the trustmanager and keymanager methods to specify a file
+    // x509 cert file in pem format and pkcs8 private key pem format
     QuicSslContext context = QuicSslContextBuilder.forServer(
       ssc.getPrivateKey(),
       null,

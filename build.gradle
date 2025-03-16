@@ -45,6 +45,7 @@ dependencies {
   // implementation group: 'io.projectreactor', name: 'reactor-bom', version: '2024.0.3'
   // implementation group: 'io.projectreactor.addons', name: 'reactor-pool', version: '1.1.2'
   // implementation group: 'io.projectreactor', name: 'reactor-tools', version: '3.7.3'
+  implementation "com.oracle.ojdbc:osdt_cert:19.3.0.0"
 }
 
 configurations {

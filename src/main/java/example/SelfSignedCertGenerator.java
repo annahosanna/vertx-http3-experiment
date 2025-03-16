@@ -74,13 +74,20 @@ public class SelfSignedCertGenerator {
       );
       X509CertificateHolder certHolder = certBuilder.build(signer);
 
+      // returns an x509 certificate object
       this.certificate = new JcaX509CertificateConverter()
         .getCertificate(certHolder);
+      
+      // So it can be written to a pem file
+      // This should be pem format
+      //  byte[] cert = this.certificate.getEncoded();
+ 
     } catch (Exception e) {
       throw new CertificateException(e);
     }
   }
 
+  // Which format are these in - like pkcs 1 or pkcs 8
   public PrivateKey getPrivateKey() {
     return this.keyPair.getPrivate();
   }

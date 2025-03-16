@@ -2,6 +2,7 @@ package example;
 
 // import io.netty.incubator.codec.quic.QuicServerCodecBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.util.SimpleTrustManagerFactory;
 // import io.netty.handler.ssl.ApplicationProtocolConfig;
 // import io.netty.handler.ssl.ApplicationProtocolNames;
 // import io.netty.handler.ssl.SslContextBuilder;
@@ -27,6 +28,10 @@ class MainServer {
 
   // public Mono<Void> start() {
   public static void main(String[] args) {
+	
+	  // See the bottom of this class for notes
+	  
+	  // This will not work needs to use the same cert as whatever is on port 8443/tcp
     SelfSignedCertGenerator ssc = null;
     try {
       ssc = new SelfSignedCertGenerator();
@@ -34,13 +39,16 @@ class MainServer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    // Fix this
+	// TrustManagerFactory trustManagerFactory = SimpleTrustManagerFactory.getInstance(SimpleTrustManagerFactory.getDefaultAlgorithm());
+    // Figure out how to use pem from files
+    // QuicSslContextBuilder.forServer(java.security.PrivateKey key, java.lang.String keyPassword, java.security.cert.X509Certificate[] certChain);
+    // or use the trustmanager and keymanager methods to specify a file
     QuicSslContext context = QuicSslContextBuilder.forServer(
       ssc.getPrivateKey(),
       null,
       ssc.getCertificate()
     )
-      // .forClient()
-      .trustManager(InsecureTrustManagerFactory.INSTANCE)
       .applicationProtocols("h3") // ALPN protocol for HTTP/3
       .build();
 
@@ -94,3 +102,28 @@ class MainServer {
     //      ).block();
   }
 }
+
+/*
+public static io.netty.incubator.codec.quic.QuicSslContextBuilder forServer(java.security.PrivateKey key, java.lang.String keyPassword, java.security.cert.X509Certificate[] certChain);
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder.keyManager
+javax.net.ssl.KeyManagerFactory keyManagerFactory,
+java.lang.String password
+      
+io.netty.incubator.codec.quic.QuicSslContextBuilder.build()
+      
+public static io.netty.incubator.codec.quic.QuicSslContext buildForServerWithSni(io.netty.util.Mapping mapping);
+io.netty.incubator.codec.quic.QuicSslContextBuilder.SNI_KEYMANAGER : javax.net.ssl.X509ExtendedKeyManager
+io.netty.util.Mapping<? super java.lang.String,? extends io.netty.incubator.codec.quic.QuicSslContext>
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder trustManager(java.io.File trustCertCollectionFile);
+io.netty.incubator.codec.quic.QuicSslContextBuilder.trustManager(java.security.cert.X509Certificate[]) : 
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder keyManager(java.io.File keyFile, java.lang.String keyPassword, java.io.File keyCertChainFile);
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder keyManager(java.security.PrivateKey key, java.lang.String keyPassword, java.security.cert.X509Certificate[]);
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder keyManager(javax.net.ssl.KeyManagerFactory keyManagerFactory, java.lang.String keyPassword);
+
+io.netty.incubator.codec.quic.QuicSslContextBuilder keyManager(javax.net.ssl.KeyManager keyManager, java.lang.String password);
+*/

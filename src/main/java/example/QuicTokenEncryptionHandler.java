@@ -141,6 +141,17 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       cipher.init(Cipher.DECRYPT_MODE, aesKey);
       byte[] decryptedAes = cipher.doFinal(receivedAes);
 
+      // Calculate time
+      byte[] unpadded = removePKCS7Padding(decryptedAes);
+      byte[] longBytes = Arrays.copyOfRange(unpadded, unpadded.length - 8, unpadded.length);
+      long timestamp = bytesToLong(longBytes);
+      long timeDifference = System.currentTimeMillis() - timestamp;
+      // Calculate token experation
+      if (timeDifference > 60000) {
+    	  return -1;
+      }
+
+
       // Validate HMAC
       Mac mac = Mac.getInstance(HMAC_ALGORITHM);
       mac.init(hmacKey);

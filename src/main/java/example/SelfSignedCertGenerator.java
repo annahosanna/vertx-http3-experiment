@@ -209,6 +209,12 @@ public class SelfSignedCertGenerator {
       oracle.security.crypto.cert.PKCS7 pkcs7OracleObject =
         new oracle.security.crypto.cert.PKCS7(x509OracleObject);
       byte[] pkcs7DER = pkcs7OracleObject.getEncoded();
+      FileOutputStream pemPKCS7FileOutputStream = new FileOutputStream(
+        "certificate-chain.pem"
+      );
+      pemPKCS7FileOutputStream.write(pkcs7DER);
+      pemPKCS7FileOutputStream.flush();
+      pemPKCS7FileOutputStream.close();
     } catch (Exception e) {
       e.printStackTrace();
     }

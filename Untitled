@@ -1,0 +1,69 @@
+KeyStore keystore = KeyStore.Instance("JKS");
+InputStream stream = new FileInputStream("path-to-jks-file");
+keystore.load(stream, null);
+PrivateKey key = (PrivateKey) keystore.getKey("mykey", "password".toCharArray());
+byte[] prvkey = key.getEncoded();
+String encoded = Base64.getEncoder().encodeToString(prvkey);
+String key_pem = "-----BEGIN PRIVATE KEY-----" + encoded + "-----END PRIVATE KEY-----";
+
+    import org.bouncycastle.cert.X509CertificateHolder;
+    import org.bouncycastle.cms.CMSException;
+    import org.bouncycastle.cms.CMSSignedData;
+    import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+    import org.bouncycastle.util.Store;
+    import java.io.FileInputStream;
+    import java.io.IOException;
+    import java.io.StringWriter;
+    import java.security.cert.Certificate;
+    import java.security.cert.CertificateException;
+    import java.security.cert.CertificateFactory;
+    import java.util.Collection;
+    import java.util.Iterator;
+
+    public class P7bToPemConverter {
+
+        public static String convertP7bToPem(String p7bFilePath)
+                throws IOException, CertificateException, CMSException {
+            FileInputStream is = new FileInputStream(p7bFilePath);
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+             CMSSignedData cms = new CMSSignedData(is);
+            Store certStore = cms.getCertificates();
+    
+            Collection<X509CertificateHolder> certs = certStore.getMatches(null);
+    
+            StringWriter pemStringWriter = new StringWriter();
+            JcaPEMWriter pemWriter = new JcaPEMWriter(pemStringWriter);
+    
+            for (X509CertificateHolder certHolder : certs) {
+                Certificate cert = cf.generateCertificate(new java.io.ByteArrayInputStream(certHolder.getEncoded()));
+                pemWriter.writeObject(cert);
+            }
+    
+            pemWriter.close();
+    
+            return pemStringWriter.toString();
+        }
+    
+        public static void main(String[] args) {
+            String p7bFilePath = "path/to/your/certificate.p7b"; // Replace with your .p7b file path
+            try {
+                String pemContent = convertP7bToPem(p7bFilePath);
+                System.out.println(pemContent);
+            } catch (IOException | CertificateException | CMSException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+            CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+        Certificate [] chain = certificate.getCertificateChain();
+        try {
+            CMSProcessableByteArray msg = new CMSProcessableByteArray("".getBytes());
+            JcaCertStore store = new JcaCertStore(Arrays.asList(chain));
+            gen.addCertificates(store);
+            CMSSignedData signedData = gen.generate(msg);
+            return signedData.getEncoded();
+        } catch (Exception ex) {
+            logger.error("Failed to construct P7B response",ex);
+            throw new RuntimeException(ex);
+        } 

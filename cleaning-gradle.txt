@@ -1,0 +1,9 @@
+rm -rf ~/.gradle
+rm -rf ./build
+gradle cleanEclipse
+# if you were initing the project then also run the eclipse task
+# right click on build.gradle in gradle project -> gradle -> refresh dependancies
+# Eclipse (menu) -> settings -> gradle (search) -> check automatic project syncronization
+# Project (menu) -> clean
+
+# can set similarly in project properties

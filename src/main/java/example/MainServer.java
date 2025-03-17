@@ -23,6 +23,8 @@ import reactor.core.publisher.Mono;
 // import io.netty.incubator.codec.http3.Http3ServerConnectionHandler;
 // import reactor.core.publisher.Mono;
 import reactor.netty.incubator.quic.QuicServer;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
 
 class MainServer {
 
@@ -32,24 +34,33 @@ class MainServer {
 	  // See the bottom of this class for notes
 	  
 	  // This will not work needs to use the same cert as whatever is on port 8443/tcp
-    SelfSignedCertGenerator ssc = null;
+    /*
+	  SelfSignedCertGenerator ssc = null;
     try {
       ssc = new SelfSignedCertGenerator();
     } catch (CertificateException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    */
     // Fix this
 	// TrustManagerFactory trustManagerFactory = SimpleTrustManagerFactory.getInstance(SimpleTrustManagerFactory.getDefaultAlgorithm());
     // Figure out how to use pem from files
     // QuicSslContextBuilder.forServer(java.security.PrivateKey key, java.lang.String keyPassword, java.security.cert.X509Certificate[] certChain);
     // or use the trustmanager and keymanager methods to specify a file
     // x509 cert file in pem format and pkcs8 private key pem format
-    QuicSslContext context = QuicSslContextBuilder.forServer(
-      ssc.getPrivateKey(),
+	  // Public: Pem encoded x509 certificate chain
+	  // Private PKCS* pem
+	  File keyFile = new File("key-file.pem");
+	  File certsFile = new File("certs.pem");
+    QuicSslContext context = QuicSslContextBuilder.forServer(keyFile, null, certsFile)
+
+/*
+    		ssc.getPrivateKey(),
       null,
       ssc.getCertificate()
     )
+    */
       .applicationProtocols("h3") // ALPN protocol for HTTP/3
       .build();
 

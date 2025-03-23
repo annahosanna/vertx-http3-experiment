@@ -51,7 +51,7 @@ class MainServer {
     // x509 cert file in pem format and pkcs8 private key pem format
 	  // Public: Pem encoded x509 certificate chain
 	  // Private PKCS* pem
-	  File keyFile = new File("key-file.pem");
+	  File keyFile = new File("key.pem");
 	  File certsFile = new File("certs.pem");
     QuicSslContext context = QuicSslContextBuilder.forServer(keyFile, null, certsFile)
 

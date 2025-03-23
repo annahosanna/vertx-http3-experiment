@@ -14,7 +14,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
+import java.security.SecureRandom;
 // dcid is up to 20 bytes
 // token can be any length
 // time is 8 bytes
@@ -77,6 +77,26 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
     this.hmacKey = generateSecretKey("HmacSHA256");
   }
 
+  private byte[] longArrayToByteArray(long[] longs) {
+	  // byte[longs.length()*2] a = null;
+	  int totalLength = 0;
+	  for (int i = 0; i<longs.length; i++) {
+		  totalLength = totalLength + longToBytes(longs[i]).length;
+	  }
+	  if (totalLength != (2*longs.length)) {
+		  // This is bad
+		  // We should have two bytes per long
+	  }
+	  byte[] out = new byte[totalLength];
+	  int offset = 0;
+	  for (int i = 0; i<longs.length; i++) {
+		  byte[] tmpByteArray = longToBytes(longs[i]);
+		  System.arraycopy(tmpByteArray, 0, out, offset, tmpByteArray.length);
+		  offset = offset + tmpByteArray.length;
+	  }
+	  return out;
+  }
+  
   @Override
   public boolean writeToken(
     ByteBuf out,
@@ -94,14 +114,24 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
       cipher.init(Cipher.ENCRYPT_MODE, aesKey);
 
+      SecureRandom sr = new SecureRandom();
+      // I'm sure there is very nice way to use a LongStream to pull out 16 byte
+      byte[] salt = longArrayToByteArray(sr.longs(8).toArray());
       byte[] byteDcid = dcid.array();
       long timestamp = System.currentTimeMillis();
       byte[] byteTimestamp = longToBytes(timestamp);
-      byte[] bytesConcatinated = concatinateBytes(byteDcid, byteTimestamp);
-      byte[] paddedBytes = addPKCS7Padding(bytesConcatinated);
+      // Add longBytes
+      int offset = 0;
+      byte[] byteArrayForConcat = new byte[salt.length+byteDcid.length+byteTimestamp.length];
+      System.arraycopy(byteDcid,0,byteArrayForConcat,offset,byteDcid.length);
+      offset = offset + byteDcid.length;
+      System.arraycopy(byteTimestamp,0,byteArrayForConcat,offset,byteTimestamp.length);
+      offset = offset + byteTimestamp.length;
+      System.arraycopy(salt,0,byteArrayForConcat,offset,salt.length);
+      byte[] paddedBytes = addPKCS7Padding(byteArrayForConcat);
+      // Encrypt variable length dcid + time + salt
       byte[] encryptedDcid = cipher.doFinal(paddedBytes);
-      // Append timestamp bytes(8) to dcid bytes(unknown length)
-
+            
       // Calculate HMAC
       Mac mac = Mac.getInstance(HMAC_ALGORITHM);
       mac.init(hmacKey);
@@ -148,7 +178,8 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
       long timeDifference = System.currentTimeMillis() - timestamp;
       // Calculate token experation
       if (timeDifference > 60000) {
-    	  return -1;
+    	  // Byte offset is not right fix it later
+    	  // return -1;
       }
 
 
@@ -170,9 +201,13 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
 
   @Override
   public int maxTokenLength() {
-    // AES encrypts in 16 byte blocks.
-    // So max length is 20 + 8 + 32 = 60
-    // So 4 used to pad to max length of 64
+    // AES encrypts in 16 byte blocks to calculate pad.
+	// Random salt is 16 bytes
+	// Time is 2 bytes
+	// dcid max length is 20 bytes
+	// hmac is 32 bytes
+	// + pad to multiple of 16 
+    // So max length is 16 + 2 + 20 + 32  = 70 + pad = 80
     return 80;
   }
 
@@ -196,7 +231,7 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
     // Calculate value of last byte
     int paddingLength = paddedData[paddedData.length - 1] & 0xFF;
 
-    // Last byte must be at least 1. You can have a padding byte with 0 length
+    // Last byte must be at least 1. You cannot have a padding byte with 0 length
     if (paddingLength < 1 || paddingLength > BLOCK_SIZE) {
       throw new IllegalArgumentException("Invalid PKCS7 padding");
     }
@@ -216,15 +251,5 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
     buffer.put(bytes);
     buffer.flip(); //need flip
     return buffer.getLong();
-  }
-
-  private byte[] concatinateBytes(byte[] array1, byte[] array2) {
-    byte[] allByteArray = new byte[array1.length + array2.length];
-
-    ByteBuffer buff = ByteBuffer.wrap(allByteArray);
-    buff.put(array1);
-    buff.put(array2);
-
-    return buff.array();
   }
 }

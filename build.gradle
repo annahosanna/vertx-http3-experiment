@@ -47,30 +47,23 @@ dependencies {
   // implementation "io.vertx:vertx-web:5.0.0.CR5"
   implementation group: 'io.projectreactor.netty.incubator', name: 'reactor-netty-incubator-quic', version: '0.2.3'
   implementation group: 'io.projectreactor.netty', name: 'reactor-netty-core', version: '1.2.3'
-  implementation "com.oracle.ojdbc:osdt_cert:19.3.0.0"
-  implementation group: 'com.oracle.ojdbc', name: 'osdt_core', version: '19.3.0.0'
-  implementation group: 'com.oracle.ojdbc', name: 'oraclepki', version: '19.3.0.0'
+  // implementation "com.oracle.ojdbc:osdt_cert:19.3.0.0"
+  // implementation group: 'com.oracle.ojdbc', name: 'osdt_core', version: '19.3.0.0'
+  // implementation group: 'com.oracle.ojdbc', name: 'oraclepki', version: '19.3.0.0'
 }
 
 configurations {
   compile
 }
 
-// compileJava.doFirst {
-//	sourceSets.main.java.srcDirs = [ 'src/main/java' ]
-// }
-
 jar {
     manifest {
-        // 'Implementation-Version': version,
         attributes (
           'Main-Class' : 'example.MainServer'
         )
     }
     archiveFileName = "http3-test.jar"
     duplicatesStrategy = "exclude"
-    // configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    // exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
     from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
       exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
     }

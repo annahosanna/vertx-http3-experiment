@@ -27,7 +27,7 @@ public class Http3FortuneStreamHandler
     ChannelHandlerContext ctx,
     Http3HeadersFrame headersFrame
   ) throws Exception {
-	  System.out.println("Calling channel handler");
+    System.out.println("Calling channel handler");
     String path = headersFrame.headers().path().toString();
 
     if ("/fortune".equals(path)) {

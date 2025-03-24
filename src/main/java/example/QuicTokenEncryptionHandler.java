@@ -7,7 +7,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.SecureRandom;
 import java.util.Arrays;
 // import java.util.Base64;
 import javax.crypto.Cipher;
@@ -78,7 +77,9 @@ public class QuicTokenEncryptionHandler implements QuicTokenHandler {
     // Generate random keys
     System.out.println("Calling new QuicTokenEncryptionHandler");
     this.aesKey = generateSecretKey("AES");
+    System.out.println("Calling new QuicTokenEncryptionHandler 1");
     this.hmacKey = generateSecretKey("HmacSHA256");
+    System.out.println("Calling new QuicTokenEncryptionHandler 2");
   }
 
   private byte[] longArrayToByteArray(long[] longs) {
